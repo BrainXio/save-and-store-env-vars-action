@@ -57,7 +57,7 @@ try {
   // Determine NEXT_VERSION
   let latestTag;
   try {
-    latestTag = execSync('git describe --tags $(git rev-list --tags --max-count=1)').toString().trim();
+    latestTag = execSync('git describe --tags --abbrev=0').toString().trim();
   } catch (error) {
     core.info('No tags found in the repository.');
   }
