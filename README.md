@@ -21,7 +21,15 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install
 
       - name: Run Save and Store Environment Variables Action
         uses: brainxio/save-and-store-env-vars@v1
@@ -39,3 +47,42 @@ jobs:
           echo "BUILD_ID=${{ env.BUILD_ID }}"
           echo "BUILDER_ID=${{ env.BUILDER_ID }}"
           echo "ARTIFACT_DIR=${{ env.ARTIFACT_DIR }}"
+          echo "NEXT_VERSION=${{ env.NEXT_VERSION }}"
+```
+
+### Inputs
+
+- `image_base`: The base image used for the build. (Required)
+- `image_version`: The version of the image used for the build. (Required)
+- `job_type`: The type of job being run. (Required)
+- `prefix`: The prefix for the builder ID. (Required)
+
+### Outputs
+
+This action does not produce direct outputs, but it sets the following environment variables:
+
+- `APP_NAME`: The name of the application, derived from the repository name.
+- `SAFE_BASENAME`: A sanitized version of the base image name.
+- `BUILDER_IMAGE_VERSION`: The version of the builder image, modified based on branch or event context.
+- `BUILD_ID`: A unique identifier for the build.
+- `BUILDER_ID`: A prefixed version of the build ID.
+- `ARTIFACT_DIR`: The directory path for storing artifacts.
+- `NEXT_VERSION`: The next semantic version based on the latest Git tag and commit message.
+
+### Security and Best Practices
+
+**Environment Variables**: Ensure all necessary environment variables are set correctly.
+
+**File Paths**
+
+: Validate and sanitize file paths to prevent security vulnerabilities.
+
+**Error Handling**: Properly handle errors to avoid unexpected failures.
+
+## Contributing
+
+We welcome contributions to improve this action. Please fork the repository and create a pull request with your changes.
+
+## License
+
+This project is licensed under the Unlicense License. See the [LICENSE](LICENSE) file for details.

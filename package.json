@@ -1,16 +1,16 @@
 {
-    "name": "save-and-store-env-vars",
-    "version": "1.0.0",
-    "description": "A GitHub Action to save and store global environment variables for use in CI/CD pipelines.",
-    "main": "index.js",
-    "scripts": {
-      "test": "echo \"Error: no test specified\" && exit 1"
-    },
-    "dependencies": {
-      "@actions/core": "^1.9.1",
-      "@actions/github": "^5.0.3"
-    },
-    "author": "mrrobot0985",
-    "license": "The Unlicense"
-  }
-  
+  "name": "save-and-store-env-vars",
+  "version": "3.0.0",
+  "description": "A GitHub Action to save and store global environment variables for use in CI/CD pipelines.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "@actions/core": "^1.9.1",
+    "@actions/github": "^5.0.3",
+    "semver": "^7.3.5"
+  },
+  "author": "",
+  "license": "The Unlicense"
+}

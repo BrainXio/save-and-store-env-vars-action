@@ -34,3 +34,4 @@ jobs:
           echo "BUILD_ID=${{ env.BUILD_ID }}"
           echo "BUILDER_ID=${{ env.BUILDER_ID }}"
           echo "ARTIFACT_DIR=${{ env.ARTIFACT_DIR }}"
+          echo "NEXT_VERSION=${{ env.NEXT_VERSION }}"
