@@ -8,7 +8,15 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install
 
       - name: Run Save and Store Environment Variables Action
         uses: ./  # This assumes the action is defined in the root of the repository
