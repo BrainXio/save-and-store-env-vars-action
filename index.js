@@ -55,22 +55,31 @@ try {
   core.info(`Artifact storage created at ${artifactDir}`);
 
   // Determine NEXT_VERSION
-  const latestTag = execSync('git describe --tags $(git rev-list --tags --max-count=1)').toString().trim();
-  let nextVersion = '0.0.1'; // Default version if no tags are found
+  let latestTag;
+  try {
+    latestTag = execSync('git describe --tags $(git rev-list --tags --max-count=1)').toString().trim();
+  } catch (error) {
+    core.info('No tags found in the repository.');
+  }
 
+  let nextVersion = 'v0.0.1'; // Default version if no tags are found
   if (latestTag) {
-    const currentVersion = semver.parse(latestTag);
+    let currentVersion = latestTag.startsWith('v') ? latestTag.substring(1) : latestTag;
+    currentVersion = semver.parse(currentVersion);
     if (currentVersion) {
       const commitMessage = github.context.payload.head_commit.message.toLowerCase();
       if (commitMessage.startsWith('breaking')) {
-        nextVersion = `${currentVersion.major + 1}.0.0`;
+        nextVersion = `v${currentVersion.major + 1}.0.0`;
       } else if (commitMessage.startsWith('feature') || commitMessage.startsWith('feat')) {
-        nextVersion = `${currentVersion.major}.${currentVersion.minor + 1}.0`;
+        nextVersion = `v${currentVersion.major}.${currentVersion.minor + 1}.0`;
       } else if (commitMessage.startsWith('bugfix') || commitMessage.startsWith('hotfix')) {
-        nextVersion = `${currentVersion.major}.${currentVersion.minor}.${currentVersion.patch + 1}`;
+        nextVersion = `v${currentVersion.major}.${currentVersion.minor}.${currentVersion.patch + 1}`;
+      } else {
+        nextVersion = `v${semver.inc(currentVersion.version, 'patch')}`; // Default to patch increment
       }
     }
   }
+
   core.exportVariable('NEXT_VERSION', nextVersion);
 
 } catch (error) {
