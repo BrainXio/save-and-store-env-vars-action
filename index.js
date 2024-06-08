@@ -1,6 +1,7 @@
 const core = require('@actions/core');
 const github = require('@actions/github');
 const { execSync } = require('child_process');
+const semver = require('semver');
 
 try {
   // Set APP_NAME
@@ -52,6 +53,25 @@ try {
   // Create Artifact Storage
   execSync(`mkdir -p ${artifactDir}`);
   core.info(`Artifact storage created at ${artifactDir}`);
+
+  // Determine NEXT_VERSION
+  const latestTag = execSync('git describe --tags $(git rev-list --tags --max-count=1)').toString().trim();
+  let nextVersion = '0.0.1'; // Default version if no tags are found
+
+  if (latestTag) {
+    const currentVersion = semver.parse(latestTag);
+    if (currentVersion) {
+      const commitMessage = github.context.payload.head_commit.message.toLowerCase();
+      if (commitMessage.startsWith('breaking')) {
+        nextVersion = `${currentVersion.major + 1}.0.0`;
+      } else if (commitMessage.startsWith('feature') || commitMessage.startsWith('feat')) {
+        nextVersion = `${currentVersion.major}.${currentVersion.minor + 1}.0`;
+      } else if (commitMessage.startsWith('bugfix') || commitMessage.startsWith('hotfix')) {
+        nextVersion = `${currentVersion.major}.${currentVersion.minor}.${currentVersion.patch + 1}`;
+      }
+    }
+  }
+  core.exportVariable('NEXT_VERSION', nextVersion);
 
 } catch (error) {
   core.setFailed(`Action failed with error: ${error.message}`);
