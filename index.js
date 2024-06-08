@@ -34,14 +34,9 @@ try {
   }
   core.exportVariable('BUILDER_IMAGE_VERSION', builderImageVersion);
 
-  // Extract branch or tag name
-  let branch = 'undefined';
-  if (ref.startsWith('refs/heads/')) {
-    branch = ref.replace('refs/heads/', '').replace(/\//g, '-').toLowerCase();
-  } else if (ref.startsWith('refs/tags/')) {
-    branch = ref.replace('refs/tags/', '').replace(/\//g, '-').toLowerCase();
-  }
-  core.info(`Branch or Tag: ${branch}`);
+  // Use the branch input
+  const branch = core.getInput('branch').replace(/\//g, '-').toLowerCase();
+  core.info(`Branch: ${branch}`);
 
   // Set BUILD_ID
   const shortSha = github.context.sha.substring(0, 7);

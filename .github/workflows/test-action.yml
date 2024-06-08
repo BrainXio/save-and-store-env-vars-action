@@ -33,6 +33,7 @@ jobs:
           image_version: 'v1-base'
           job_type: 'build'
           prefix: 'custom-prefix'
+          branch: '${{ github.ref_name }}'
 
       - name: Print Environment Variables
         run: |
