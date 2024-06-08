@@ -1,0 +1,18 @@
+name: 'Save and Store Environment Variables'
+description: 'A GitHub Action to save and store global environment variables for use in CI/CD pipelines.'
+inputs:
+  image_base:
+    description: 'The base image used for the build.'
+    required: true
+  image_version:
+    description: 'The version of the image used for the build.'
+    required: true
+  job_type:
+    description: 'The type of job being run.'
+    required: true
+  prefix:
+    description: 'The prefix for the builder ID.'
+    required: true
+runs:
+  using: 'node20'
+  main: 'index.js'

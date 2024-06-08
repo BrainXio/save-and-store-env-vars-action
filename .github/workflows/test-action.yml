@@ -1,16 +1,3 @@
-# save-and-store-env-vars
-
-## Overview
-
-Hello, amazing developer! 🤖 `save-and-store-env-vars` is a GitHub Action that helps you save and store global environment variables for use in your CI/CD pipelines. This action processes various inputs to generate and export several environment variables essential for your workflows.
-
-## Usage
-
-### Workflow Example
-
-To use this action, add the following step to your GitHub Actions workflow:
-
-```yaml
 name: Test Save and Store Environment Variables
 
 on: [push, pull_request]
@@ -21,10 +8,18 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install
 
       - name: Run Save and Store Environment Variables Action
-        uses: brainxio/save-and-store-env-vars@v1
+        uses: ./  # This assumes the action is defined in the root of the repository
         with:
           image_base: 'nodejs-base'
           image_version: 'v1-base'
