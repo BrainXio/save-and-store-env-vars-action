@@ -36,6 +36,7 @@ try {
 
   // Set BUILD_ID
   const branch = github.context.ref.replace(/\//g, '-').toLowerCase();
+  core.info(`Branch: ${branch}`);
   const shortSha = github.context.sha.substring(0, 7);
   const imageTag = `${shortSha}-${github.context.runId}-${github.context.runNumber}-${github.context.runAttempt}-${safeBaseName}-${builderImageVersion}`;
   core.exportVariable('BUILD_ID', imageTag);
