@@ -65,6 +65,15 @@ try {
   let nextVersion = 'v0.0.1'; // Default version if no tags are found
   if (latestTag) {
     let currentVersion = latestTag.startsWith('v') ? latestTag.substring(1) : latestTag;
+    
+    // Normalize partial versions to full semver
+    const parts = currentVersion.split('.');
+    if (parts.length === 1) {
+      currentVersion = `${currentVersion}.0.0`;
+    } else if (parts.length === 2) {
+      currentVersion = `${currentVersion}.0`;
+    }
+
     currentVersion = semver.parse(currentVersion);
     if (currentVersion) {
       const commitMessage = github.context.payload.head_commit.message.toLowerCase();
