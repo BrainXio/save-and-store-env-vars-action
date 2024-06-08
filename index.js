@@ -34,11 +34,18 @@ try {
   }
   core.exportVariable('BUILDER_IMAGE_VERSION', builderImageVersion);
 
+  // Extract branch or tag name
+  let branch = 'undefined';
+  if (ref.startsWith('refs/heads/')) {
+    branch = ref.replace('refs/heads/', '').replace(/\//g, '-').toLowerCase();
+  } else if (ref.startsWith('refs/tags/')) {
+    branch = ref.replace('refs/tags/', '').replace(/\//g, '-').toLowerCase();
+  }
+  core.info(`Branch or Tag: ${branch}`);
+
   // Set BUILD_ID
-  const branch = ref.replace('refs/heads/', '').replace(/\//g, '-').toLowerCase();
-  core.info(`Branch: ${branch}`);
   const shortSha = github.context.sha.substring(0, 7);
-  const imageTag = `${shortSha}-${github.context.runId}-${github.context.runNumber}-${github.context.runAttempt}-${safeBaseName}-${builderImageVersion}`;
+  const imageTag = `${shortSha}-${github.context.runId}-${github.context.runNumber}-${github.context.runAttempt}-${branch}-${safeBaseName}-${builderImageVersion}`;
   core.exportVariable('BUILD_ID', imageTag);
 
   // Set BUILDER_ID
