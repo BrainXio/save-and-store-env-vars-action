@@ -1,6 +1,7 @@
 const core = require('@actions/core');
 const github = require('@actions/github');
 const { execSync } = require('child_process');
+const semver = require('semver');
 
 try {
   // Set APP_NAME
@@ -52,6 +53,43 @@ try {
   // Create Artifact Storage
   execSync(`mkdir -p ${artifactDir}`);
   core.info(`Artifact storage created at ${artifactDir}`);
+
+  // Determine NEXT_VERSION
+  let latestTag;
+  try {
+    latestTag = execSync('git describe --tags --abbrev=0').toString().trim();
+  } catch (error) {
+    core.info('No tags found in the repository.');
+  }
+
+  let nextVersion = 'v0.0.1'; // Default version if no tags are found
+  if (latestTag) {
+    let currentVersion = latestTag.startsWith('v') ? latestTag.substring(1) : latestTag;
+    
+    // Normalize partial versions to full semver
+    const parts = currentVersion.split('.');
+    if (parts.length === 1) {
+      currentVersion = `${currentVersion}.0.0`;
+    } else if (parts.length === 2) {
+      currentVersion = `${currentVersion}.0`;
+    }
+
+    currentVersion = semver.parse(currentVersion);
+    if (currentVersion) {
+      const commitMessage = github.context.payload.head_commit.message.toLowerCase();
+      if (commitMessage.startsWith('breaking')) {
+        nextVersion = `v${currentVersion.major + 1}.0.0`;
+      } else if (commitMessage.startsWith('feature') || commitMessage.startsWith('feat')) {
+        nextVersion = `v${currentVersion.major}.${currentVersion.minor + 1}.0`;
+      } else if (commitMessage.startsWith('bugfix') || commitMessage.startsWith('hotfix')) {
+        nextVersion = `v${currentVersion.major}.${currentVersion.minor}.${currentVersion.patch + 1}`;
+      } else {
+        nextVersion = `v${semver.inc(currentVersion.version, 'patch')}`; // Default to patch increment
+      }
+    }
+  }
+
+  core.exportVariable('NEXT_VERSION', nextVersion);
 
 } catch (error) {
   core.setFailed(`Action failed with error: ${error.message}`);
