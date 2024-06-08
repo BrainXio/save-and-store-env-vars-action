@@ -34,10 +34,17 @@ try {
   }
   core.exportVariable('BUILDER_IMAGE_VERSION', builderImageVersion);
 
+  // Use the branch input
+  const branch = core.getInput('branch').replace(/\//g, '-').toLowerCase();
+  core.info(`Branch: ${branch}`);
+
+  // Use runAttempt or provide a default value
+  const runAttempt = github.context.runAttempt || '1';
+  core.info(`Run Attempt: ${runAttempt}`);
+
   // Set BUILD_ID
-  const branch = github.context.ref.replace(/\//g, '-').toLowerCase();
   const shortSha = github.context.sha.substring(0, 7);
-  const imageTag = `${shortSha}-${github.context.runId}-${github.context.runNumber}-${github.context.runAttempt}-${safeBaseName}-${builderImageVersion}`;
+  const imageTag = `${shortSha}-${github.context.runId}-${github.context.runNumber}-${runAttempt}-${branch}-${safeBaseName}-${builderImageVersion}`;
   core.exportVariable('BUILD_ID', imageTag);
 
   // Set BUILDER_ID

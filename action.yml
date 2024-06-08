@@ -13,6 +13,9 @@ inputs:
   prefix:
     description: 'The prefix for the builder ID.'
     required: true
+  branch:
+    description: 'The branch name.'
+    required: true
 runs:
   using: 'node20'
   main: 'index.js'
