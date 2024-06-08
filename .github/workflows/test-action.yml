@@ -18,6 +18,11 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+      - name: Retrieve and print latest tag
+        run: |
+          latest_tag=$(git describe --tags --abbrev=0)
+          echo "Latest tag: $latest_tag"
+          
       - name: Run Save and Store Environment Variables Action
         uses: ./  # This assumes the action is defined in the root of the repository
         with:
